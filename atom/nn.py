@@ -4,9 +4,6 @@ from typing import Callable
 from activations import sigmoid,relu,linear
 
 
-
-
-
 @dataclass
 class BinaryCrossentropy:
     y_hat:np.ndarray
@@ -36,8 +33,7 @@ class Dense:
                          }
         
         self.activation_function = activation_map[self.activation_key]
-        
-        
+           
 class Sequential:
     def __init__(self,layers:list[Dense]):
         self.layers = layers
@@ -45,7 +41,8 @@ class Sequential:
     def predict(self,x:np.ndarray):
         a = x
         for layer in self.layers:
-            a = layer.activation_function((a @ layer.w) + layer.b)
+            z = (a @ layer.w) = layer.b
+            a = layer.activation_function(z)
         return a
 
     def __getitem__(self,position:int):

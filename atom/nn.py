@@ -41,7 +41,7 @@ class Sequential:
     def predict(self,x:np.ndarray):
         a = x
         for layer in self.layers:
-            z = (a @ layer.w) = layer.b
+            z = (a @ layer.w) + layer.b
             a = layer.activation_function(z)
         return a
 

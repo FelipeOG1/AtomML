@@ -13,7 +13,6 @@ class BinaryCrossentropy:
     
     def compute_cost(self):return np.mean(self.compute_loss())
 
-
 @dataclass
 class Dense:
     units: int
@@ -33,10 +32,11 @@ class Dense:
                          }
         
         self.activation_function = activation_map[self.activation_key]
-           
+ 
+
+@dataclass
 class Sequential:
-    def __init__(self,layers:list[Dense]):
-        self.layers = layers
+    layers: list[Dense]
 
     def predict(self,x:np.ndarray):
         a = x

@@ -1,8 +1,11 @@
 import numpy as np
-from dataclasses import dataclass
+from dataclasses import dataclass,field
+from typing import Callable
+from activations import sigmoid,relu,linear
 
 
-def g(z):return 1/(1+np.exp(-z))
+
+
 
 @dataclass
 class BinaryCrossentropy:
@@ -16,31 +19,33 @@ class BinaryCrossentropy:
 
 @dataclass
 class Dense:
-    units:int
-    w:np.ndarray = field(False)
-    b:np.ndarray = field(False)
-    activation_key:str
-    activation_function = field(False)
+    units: int
+    activation_key: str
+    
+    w: np.ndarray = field(False)
+    b: np.ndarray = field(False)
+    activation_function: Callable[[np.ndarray],np.ndarray] = field(False)
     
     def __post_init__(self):
         if not self.activation_key in ('sigmoid','relu','linear'):
             raise ValueError("Not implemented activation function")
         
-        fucntions = {'sigmoid':g,
-                     ''
-                     }
+        activation_map = { 'sigmoid':sigmoid,
+                           'relu':relu,
+                           'linear':linear
+                         }
         
-    
-    def __postinit
+        self.activation_function = activation_map[self.activation_key]
+        
+        
 class Sequential:
-    def __init__(self,layers:list[Layer]):
+    def __init__(self,layers:list[Dense]):
         self.layers = layers
 
-    
     def predict(self,x:np.ndarray):
         a = x
         for layer in self.layers:
-            a = g((a @ layer.w) + layer.b)
+            a = layer.activation_function((a @ layer.w) + layer.b)
         return a
 
     def __getitem__(self,position:int):

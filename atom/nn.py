@@ -1,7 +1,7 @@
 import numpy as np
 from dataclasses import dataclass,field
 from typing import Callable
-from activations import sigmoid,relu,linear
+from atom.activations import sigmoid,relu,linear
 
 
 @dataclass
@@ -19,15 +19,14 @@ class Dense:
                    'relu':relu,
                    'linear':linear}
     
-    def __init__(self,units: int,activation_key: str):
-        if not  activation_key in self.ACTIVATIONS:
+    def __init__(self,units: int,activation: str):
+        if not  activation in self.ACTIVATIONS:
             raise ValueError("Activation not allowed")
     
         self.units = units
-        self.activation_key = activation_key
         self.w: np.ndarray | None = None
         self.b: np.ndarray | None = None
-        self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation_key]
+        self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation]
     
  
 
@@ -51,4 +50,3 @@ class Sequential:
             layer.w,layer.b = weights[index * 2],weights[index * 2 + 1]
 
     
- 

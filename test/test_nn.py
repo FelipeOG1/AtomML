@@ -1,13 +1,13 @@
+import pytest
 import tensorflow as tf
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 
-from  atom import Dense,Sequential,BinaryCrossentropy
+from atom.nn import Dense,Sequential
 
 
-
-
-def sum(x: int,y: int)->int:return x + y
-
-def test_sum():
-    assert sum(1,3)  == 4
+class TestDense:
+    def test_init_validations(self):
+        with pytest.raises(ValueError):
+             Dense(units=2,activation='foo')
+        

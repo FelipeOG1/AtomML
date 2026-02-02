@@ -27,7 +27,22 @@ class Dense:
         self.w: np.ndarray | None = None
         self.b: np.ndarray | None = None
         self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation]
-    
+
+    def set_weights(self,w: np.ndarray,b: np.ndarray):
+        pass
+        
+    def build(self,input_shape: tuple[int,int]):
+        if not all([isinstance(input_shape,tuple),input_shape,len(input_shape) <= 2]):
+            raise ValueError("Invalid input shape")
+            
+        self.w = np.random.rand(input_shape[1],self.units)
+        self.b = np.zeros((1,self.units))
+        
+        
+        
+        
+        
+
  
 
 @dataclass

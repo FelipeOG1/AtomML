@@ -13,25 +13,22 @@ class BinaryCrossentropy:
     
     def compute_cost(self):return np.mean(self.compute_loss())
 
-@dataclass
 class Dense:
-    units: int
-    activation_key: str
+
+    ACTIVATIONS = {'sigmoid':sigmoid,
+                   'relu':relu,
+                   'linear':linear}
     
-    w: np.ndarray = field(False)
-    b: np.ndarray = field(False)
-    activation_function: Callable[[np.ndarray],np.ndarray] = field(False)
+    def __init__(self,units: int,activation_key: str):
+        if not  activation_key in self.ACTIVATIONS:
+            raise ValueError("Activation not allowed")
     
-    def __post_init__(self):
-        if not self.activation_key in ('sigmoid','relu','linear'):
-            raise ValueError("Not implemented activation function")
-        
-        activation_map = { 'sigmoid':sigmoid,
-                           'relu':relu,
-                           'linear':linear
-                         }
-        
-        self.activation_function = activation_map[self.activation_key]
+        self.units = units
+        self.activation_key = activation_key
+        self.w: np.ndarray | None = None
+        self.b: np.ndarray | None = None
+        self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation_key]
+    
  
 
 @dataclass

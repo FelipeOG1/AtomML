@@ -2,7 +2,7 @@ import numpy as np
 from dataclasses import dataclass,field
 from typing import Callable
 from atom.activations import sigmoid,relu,linear
-
+from typing import Optional
 
 @dataclass
 class BinaryCrossentropy:
@@ -19,31 +19,40 @@ class Dense:
                    'relu':relu,
                    'linear':linear}
     
-    def __init__(self,units: int,activation: str):
+    def __init__(self,units: int,
+                 activation: str,
+                 input_shape: Optional[tuple] = None,
+                 ):
         if not  activation in self.ACTIVATIONS:
             raise ValueError("Activation not allowed")
-    
-        self.units = units
-        self.w: np.ndarray | None = None
-        self.b: np.ndarray | None = None
-        self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation]
-
-    def set_weights(self,w: np.ndarray,b: np.ndarray):
-        pass
         
+        self.units = units
+        self.w: Optional[np.ndarray] = None
+        self.b: Optional[np.ndarray] = None
+        self.input_shape = input_shape
+        self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation]
+    
+
+    def _set_w_b(self, w: Optional[np.ndarray] = None, b: Optional[np.ndarray] = None):
+        if not self.input_shape:
+            raise ValueError("Unknown input shape")
+
+        self.w = w if w is not None else np.random.rand(self.input_shape[1], self.units) * 0.01
+        self.b = b if b is not None else np.zeros((1, self.units))
+  
+ 
+    def set_weights(self,w: np.ndarray,b: np.ndarray):
+        self._set_w_b(w=w,b=b)
+
+            
     def build(self,input_shape: tuple[int,int]):
         if not all([isinstance(input_shape,tuple),input_shape,len(input_shape) <= 2]):
             raise ValueError("Invalid input shape")
-            
-        self.w = np.random.rand(input_shape[1],self.units)
-        self.b = np.zeros((1,self.units))
+        self.input_shape = input_shape
+        self._set_w_b()    
         
+    
         
-        
-        
-        
-
- 
 
 @dataclass
 class Sequential:

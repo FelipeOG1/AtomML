@@ -2,7 +2,7 @@ import pytest
 import tensorflow as tf
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
-
+import numpy as np
 from atom.nn import Dense,Sequential
 
 
@@ -24,5 +24,15 @@ class TestDense:
         
         assert layer.w.shape == (400,10)
         assert layer.b.shape == (1,10)
+
+
+    def test_set_weights(self):
+         with pytest.raises(ValueError):
+            print("NASHEE")
+            layer = Dense(units=3,activation='relu')
+            layer.set_weights(np.array([300,200]),np.ndarray([20,20]))
+            
+
+
 
 

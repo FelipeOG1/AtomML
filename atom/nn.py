@@ -23,6 +23,7 @@ class Dense:
                  activation: str,
                  input_shape: tuple[int,int] | None = None,
                  ):
+        
         if not  activation in self.ACTIVATIONS:
             raise ValueError("Activation not allowed")
         
@@ -31,6 +32,7 @@ class Dense:
         self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation]
         self.w = None
         self.b = None
+        
         if self.input_shape:
             self._init_w_b()
      
@@ -47,7 +49,7 @@ class Dense:
 
             
     def build(self,input_shape: tuple[int,int]):
-        if not all([isinstance(input_shape,tuple),input_shape,len(input_shape) <= 2]):
+        if not isinstance(input_shape,tuple) or len(input_shape) != 2:
             raise ValueError("Invalid input shape")
         self.input_shape = input_shape
         self._init_w_b()    

@@ -70,7 +70,7 @@ class Sequential:
             self._set_weights_layers(input_shape)
 
 
-    def __getitem__(self,position:int):
+    def __getitem__(self,position: int):
         return self.layers[position]
 
     def __iter__(self):

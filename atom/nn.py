@@ -58,8 +58,11 @@ class Sequential:
     layers: list[Dense]
 
     def _set_weights_layers(self,input_shape: tuple | None = None):
+        
+        self.layers[0].build(input_shape)
         INPUT_ROWS: int = input_shape[0]
         a_out_shape: tuple = (INPUT_ROWS,self.layers[0].units)
+        
         for layer in self.layers[1:]:
             layer.build(a_out_shape)
             a_out_shape = (INPUT_ROWS,layer.units)
@@ -76,10 +79,6 @@ class Sequential:
     def __iter__(self):
         return iter(self.layers)
     
-
-
-
-
     
     def build(self,input_shape: tuple)->None:
         self._set_weights_layers(input_shape)

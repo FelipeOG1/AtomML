@@ -35,37 +35,45 @@ class TestDense:
 
 
 class TestSequential:
-
-
     def test_post_init(self):
         model = Sequential([
-            Dense(units=10,activation='relu',input_shape=(1000,400)),
-            Dense(units=15,activation='relu'),
-            Dense(units=1,activation='relu')
+            Dense(units=10, activation='relu', input_shape=(1000, 400)),
+            Dense(units=15, activation='relu'),
+            Dense(units=1, activation='relu')
         ]) 
 
-        #EXPECTED SHAPES
+        w1_shape, b1_shape = (400, 10), (1, 10)
+        w2_shape, b2_shape = (10, 15), (1, 15)
+        w3_shape, b3_shape = (15, 1), (1, 1)
+        
+        assert model[0].w.shape == w1_shape
+        assert model[0].b.shape == b1_shape
+        assert model[1].w.shape == w2_shape
+        assert model[1].b.shape == b2_shape
+        assert model[2].w.shape == w3_shape
+        assert model[2].b.shape == b3_shape
+
+    def test_build(self):
+        model = Sequential([
+            Dense(units=10, activation='relu'),
+            Dense(units=15, activation='relu'),
+            Dense(units=1, activation='relu')
+        ]) 
+
+        for layer in model:
+            assert not hasattr(layer, 'w') or layer.w is None 
+            
+        model.build(input_shape=(1000, 400))
+        
         w1_shape, b1_shape = (400, 10), (1, 10)
         w2_shape, b2_shape = (10, 15), (1, 15)
         w3_shape, b3_shape = (15, 1), (1, 1)
 
-        assert model.layers[0].w.shape == w1_shape
-        assert model.layers[0].b.shape == b1_shape
+        assert model[0].w.shape == w1_shape
+        assert model[0].b.shape == b1_shape
+        assert model[1].w.shape == w2_shape
+        assert model[1].b.shape == b2_shape
+        assert model[2].w.shape == w3_shape
+        assert model[2].b.shape == b3_shape 
 
-        assert model.layers[1].w.shape == w2_shape
-        assert model.layers[1].b.shape == b2_shape
-
-        assert model.layers[2].w.shape == w3_shape
-        assert model.layers[2].b.shape == b3_shape
-
-    def test_build(self):
-        model = Sequential([
-            Dense(units=10,activation='relu'),
-            Dense(units=15,activation='relu'),
-            Dense(units=1,activation='relu')
-        ]) 
-
-            
-
-        
         

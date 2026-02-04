@@ -21,19 +21,19 @@ class Dense:
     
     def __init__(self,units: int,
                  activation: str,
-                 input_shape: Optional[tuple] = None,
+                 input_shape: tuple[int,int] | None = None,
                  ):
         if not  activation in self.ACTIVATIONS:
             raise ValueError("Activation not allowed")
         
         self.units = units
-        self.w: Optional[np.ndarray] = None
-        self.b: Optional[np.ndarray] = None
         self.input_shape = input_shape
         self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation]
-    
-
-    def _set_w_b(self, w: Optional[np.ndarray] = None, b: Optional[np.ndarray] = None):
+        
+        if self.input_shape:
+            self._init_w_b()
+     
+    def _init_w_b(self, w: np.ndarray | None = None, b: np.ndarray | None = None):
         if not self.input_shape:
             raise ValueError("Unknown input shape")
 
@@ -42,22 +42,30 @@ class Dense:
   
  
     def set_weights(self,w: np.ndarray,b: np.ndarray):
-        self._set_w_b(w=w,b=b)
+        self._init_w_b(w=w,b=b)
 
             
     def build(self,input_shape: tuple[int,int]):
         if not all([isinstance(input_shape,tuple),input_shape,len(input_shape) <= 2]):
             raise ValueError("Invalid input shape")
         self.input_shape = input_shape
-        self._set_w_b()    
-        
-    
+        self._init_w_b()    
         
 
 @dataclass
 class Sequential:
     layers: list[Dense]
 
+    def __post_init__(self):
+        first_layer: Dense = self.layers[0]
+        if getattr(first_layer,"input_shape",None) is not None:
+            INPUT_ROWS: int = first_layer.input_shape[0]
+            a_out_shape = (INPUT_ROWS,first_layer.units)
+            for layer in self.layers[1:]:
+                layer.build(a_out_shape)
+                a_out_shape = (INPUT_ROWS,layer.units)
+            
+            
     def predict(self,x:np.ndarray):
         a = x
         for layer in self.layers:

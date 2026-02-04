@@ -44,8 +44,6 @@ class TestSequential:
             Dense(units=1,activation='relu')
         ]) 
 
-
-
         #EXPECTED SHAPES
         w1_shape, b1_shape = (400, 10), (1, 10)
         w2_shape, b2_shape = (10, 15), (1, 15)
@@ -59,3 +57,15 @@ class TestSequential:
 
         assert model.layers[2].w.shape == w3_shape
         assert model.layers[2].b.shape == b3_shape
+
+    def test_build(self):
+        model = Sequential([
+            Dense(units=10,activation='relu'),
+            Dense(units=15,activation='relu'),
+            Dense(units=1,activation='relu')
+        ]) 
+
+            
+
+        
+        

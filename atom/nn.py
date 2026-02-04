@@ -29,7 +29,8 @@ class Dense:
         self.units = units
         self.input_shape = input_shape
         self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation]
-        
+        self.w = None
+        self.b = None
         if self.input_shape:
             self._init_w_b()
      
@@ -56,15 +57,32 @@ class Dense:
 class Sequential:
     layers: list[Dense]
 
+    def _set_weights_layers(self,input_shape: tuple | None = None):
+        INPUT_ROWS: int = input_shape[0]
+        a_out_shape: tuple = (INPUT_ROWS,self.layers[0].units)
+        for layer in self.layers[1:]:
+            layer.build(a_out_shape)
+            a_out_shape = (INPUT_ROWS,layer.units)
+    
     def __post_init__(self):
-        first_layer: Dense = self.layers[0]
-        if getattr(first_layer,"input_shape",None) is not None:
-            INPUT_ROWS: int = first_layer.input_shape[0]
-            a_out_shape: tuple = (INPUT_ROWS,first_layer.units)
-            for layer in self.layers[1:]:
-                layer.build(a_out_shape)
-                a_out_shape = (INPUT_ROWS,layer.units)
-            
+        if getattr(self.layers[0],"input_shape",None) is not None:
+            input_shape = self.layers[0].input_shape
+            self._set_weights_layers(input_shape)
+
+
+    def __getitem__(self,position:int):
+        return self.layers[position]
+
+    def __iter__(self):
+        return iter(self.layers)
+    
+
+
+
+
+    
+    def build(self,input_shape: tuple)->None:
+        self._set_weights_layers(input_shape)
             
     def predict(self,x:np.ndarray):
         a = x
@@ -73,9 +91,7 @@ class Sequential:
             a = layer.activation_function(z)
         return a
 
-    def __getitem__(self,position:int):
-        return self.layers[position]
-    
+   
     def set_weights(self,weights:list[np.ndarray]):
         assert len(weights) == 2 * len(self.layers)
         for index,layer in enumerate(self.layers):

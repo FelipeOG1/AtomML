@@ -60,7 +60,7 @@ class Sequential:
         first_layer: Dense = self.layers[0]
         if getattr(first_layer,"input_shape",None) is not None:
             INPUT_ROWS: int = first_layer.input_shape[0]
-            a_out_shape = (INPUT_ROWS,first_layer.units)
+            a_out_shape: tuple = (INPUT_ROWS,first_layer.units)
             for layer in self.layers[1:]:
                 layer.build(a_out_shape)
                 a_out_shape = (INPUT_ROWS,layer.units)

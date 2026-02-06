@@ -71,9 +71,9 @@ class Sequential:
             a_out_shape = (INPUT_ROWS,layer.units)
     
     def __post_init__(self):
-        first_layer: Dense = self.layers[0] 
-        if first_layer.input_shape:
-            self._set_weights_layers(first_layer.input_shape)
+        if getattr(self.layers[0],"input_shape",None) is not None:
+            input_shape = self.layers[0].input_shape
+            self._set_weights_layers(input_shape)
 
 
     def __getitem__(self,position: int):

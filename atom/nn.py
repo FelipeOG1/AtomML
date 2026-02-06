@@ -19,7 +19,8 @@ class Dense:
                    'relu':relu,
                    'linear':linear}
     
-    def __init__(self,units: int,
+    def __init__(self,
+                 units: int,
                  activation: str,
                  input_shape: tuple[int,int] | None = None,
                  ):
@@ -59,7 +60,7 @@ class Dense:
 class Sequential:
     layers: list[Dense]
 
-    def _set_weights_layers(self,input_shape: tuple | None = None):
+    def _set_weights_layers(self,input_shape: tuple[int,int]):
         
         self.layers[0].build(input_shape)
         INPUT_ROWS: int = input_shape[0]
@@ -70,9 +71,9 @@ class Sequential:
             a_out_shape = (INPUT_ROWS,layer.units)
     
     def __post_init__(self):
-        if getattr(self.layers[0],"input_shape",None) is not None:
-            input_shape = self.layers[0].input_shape
-            self._set_weights_layers(input_shape)
+        first_layer: Dense = self.layers[0] 
+        if first_layer.input_shape:
+            self._set_weights_layers(first_layer.input_shape)
 
 
     def __getitem__(self,position: int):

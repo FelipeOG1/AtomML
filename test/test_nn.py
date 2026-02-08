@@ -36,8 +36,9 @@ class TestDense:
 
 class TestSequential:
     def test_post_init(self):
+        x_train = np.random.randn(1000,400)
         model = Sequential([
-            Dense(units=10, activation='relu', input_shape=(1000, 400)),
+            Dense(units=10, activation='relu',input_shape=x_train.shape),
             Dense(units=15, activation='relu'),
             Dense(units=1, activation='relu')
         ]) 
@@ -75,5 +76,6 @@ class TestSequential:
         assert model[1].b.shape == b2_shape
         assert model[2].w.shape == w3_shape
         assert model[2].b.shape == b3_shape 
+
 
         

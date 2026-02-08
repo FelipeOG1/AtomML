@@ -27,12 +27,12 @@ class Dense:
         
         if not  activation in self.ACTIVATIONS:
             raise ValueError("Activation not allowed")
-        
+    
         self.units = units
         self.input_shape = input_shape
         self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation]
-        self.w = None
-        self.b = None
+        self.w: np.ndarray | None = None
+        self.b: np.ndarray | None = None
         
         if self.input_shape:
             self._init_w_b()
@@ -87,7 +87,7 @@ class Sequential:
         self._set_weights_layers(input_shape)
             
     def predict(self,x:np.ndarray):
-        a = x
+        a: np.ndarray = x
         for layer in self.layers:
             z = (a @ layer.w) + layer.b
             a = layer.activation_function(z)

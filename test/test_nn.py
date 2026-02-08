@@ -76,3 +76,5 @@ class TestSequential:
         assert model[1].b.shape == b2_shape
         assert model[2].w.shape == w3_shape
         assert model[2].b.shape == b3_shape 
+
+        model.predict(x_train)

@@ -1,7 +1,4 @@
 import pytest
-import tensorflow as tf
-from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense
 import numpy as np
 from atom.nn import Dense,Sequential
 
@@ -36,11 +33,10 @@ class TestDense:
 
 class TestSequential:
     def test_post_init(self):
-        x_train = np.random.randn(1000,400)
         model = Sequential([
-            Dense(units=10, activation='relu',input_shape=x_train.shape),
+            Dense(units=10, activation='relu',input_shape=(1000,400)),
             Dense(units=15, activation='relu'),
-            Dense(units=1, activation='relu')
+            Dense(units=1, activation='sigmoid')
         ]) 
 
         w1_shape, b1_shape = (400, 10), (1, 10)
@@ -55,6 +51,8 @@ class TestSequential:
         assert model[2].b.shape == b3_shape
 
     def test_build(self):
+        
+        x_train = np.random.randn(1000,400)
         model = Sequential([
             Dense(units=10, activation='relu'),
             Dense(units=15, activation='relu'),
@@ -64,7 +62,7 @@ class TestSequential:
         for layer in model:
             assert not hasattr(layer, 'w') or layer.w is None 
             
-        model.build(input_shape=(1000, 400))
+        model.build(input_shape=x_train.shape)
         
         w1_shape, b1_shape = (400, 10), (1, 10)
         w2_shape, b2_shape = (10, 15), (1, 15)
@@ -77,5 +75,5 @@ class TestSequential:
         assert model[2].w.shape == w3_shape
         assert model[2].b.shape == b3_shape 
 
-
         
+        model.predict(x_train)      

@@ -40,11 +40,10 @@ class Dense:
     def _init_w_b(self, w: np.ndarray | None = None, b: np.ndarray | None = None):
         if not self.input_shape:
             raise ValueError("Unknown input shape")
-
-        self.w = w if w is not None else np.random.rand(self.input_shape[1], self.units) * 0.01
+        self.w = w if w is not None else np.random.randn(self.input_shape[1], self.units) * 0.01
         self.b = b if b is not None else np.zeros((1, self.units))
   
- 
+
     def set_weights(self,w: np.ndarray,b: np.ndarray):
         self._init_w_b(w=w,b=b)
 
@@ -61,15 +60,10 @@ class Sequential:
     layers: list[Dense]
 
     def _set_weights_layers(self,input_shape: tuple[int,int]):
-        
-        self.layers[0].build(input_shape)
-        INPUT_ROWS: int = input_shape[0]
-        a_out_shape: tuple = (INPUT_ROWS,self.layers[0].units)
-        
-        for layer in self.layers[1:]:
-            layer.build(a_out_shape)
-            a_out_shape = (INPUT_ROWS,layer.units)
-    
+        current_dim = input_shape[-1]
+        for layer in self.layers:
+            layer.build((input_shape[0],current_dim))
+            current_dim = layer.units
     def __post_init__(self):
         if getattr(self.layers[0],"input_shape",None) is not None:
             input_shape = self.layers[0].input_shape
@@ -90,7 +84,6 @@ class Sequential:
         a: np.ndarray = x
         for layer in self.layers:
             z = (a @ layer.w) + layer.b
-            print(z.shape)
             a = layer.activation_function(z)
         return a
 

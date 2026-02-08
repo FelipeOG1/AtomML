@@ -1,4 +1,7 @@
 import pytest
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
 import numpy as np
 from atom.nn import Dense,Sequential
 
@@ -25,7 +28,6 @@ class TestDense:
 
     def test_set_weights(self):
          with pytest.raises(ValueError):
-            print("NASHEE")
             layer = Dense(units=3,activation='relu')
             layer.set_weights(np.array([300,200]),np.ndarray([20,20]))
             
@@ -74,6 +76,3 @@ class TestSequential:
         assert model[1].b.shape == b2_shape
         assert model[2].w.shape == w3_shape
         assert model[2].b.shape == b3_shape 
-
-        
-        model.predict(x_train)      

@@ -1,16 +1,54 @@
 <DIRECTIONS>
-haz test con x_train ficticios comparando la salida de un predict tensorflow con mi nn, observa el formato que retorno las predicciones en @atom/nn.py 
+test/test_nn.py::TestSequential::test_predict
+  /home/felipe/atom/venv/lib/python3.13/site-packages/keras/src/layers/core/dense.py:106: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+    super().__init__(activity_regularizer=activity_regularizer, **kwargs)
 
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+make this warning go away
 </DIRECTIONS>
 <Context>
 You receive a selection in neovim that you need to replace with new code.
 The selection's contents may contain notes, incorporate the notes every time if there are some.
 consider the context of the selection and what you are suppose to be implementing
 <SELECTION_LOCATION>
-range(point(83,4),point(84,9))
+range(point(83,1),point(118,9))
 </SELECTION_LOCATION>
 <SELECTION_CONTENT>
- def test_predict(self):
+    def test_predict(self):
+        np.random.seed(42)
+        x_train = np.random.randn(100, 400).astype(np.float32)
+        
+        tf_model = tf.keras.Sequential([
+            tf.keras.layers.Dense(units=10, activation='relu', input_shape=(400,)),
+            tf.keras.layers.Dense(units=15, activation='relu'),
+            tf.keras.layers.Dense(units=1, activation='sigmoid')
+        ])
+        tf_model.build(input_shape=(None, 400))
+        
+        custom_model = Sequential([
+            Dense(units=10, activation='relu', input_shape=(100, 400)),
+            Dense(units=15, activation='relu'),
+            Dense(units=1, activation='sigmoid')
+        ])
+        custom_model.build(input_shape=x_train.shape)
+        
+        weights = []
+        for layer in tf_model.layers:
+            w, b = layer.get_weights()
+            weights.extend([w, b])
+        custom_model.set_weights(weights)
+        
+        tf_predictions = tf_model.predict(x_train, verbose=0)
+        custom_predictions = custom_model.predict(x_train)
+        
+        print(f"\nTensorFlow predictions shape: {tf_predictions.shape}")
+        print(f"TensorFlow predictions dtype: {tf_predictions.dtype}")
+        print(f"Custom predictions shape: {custom_predictions.shape}")
+        print(f"Custom predictions dtype: {custom_predictions.dtype}")
+        print(f"\nFirst 5 TF predictions:\n{tf_predictions[:5].flatten()}")
+        print(f"\nFirst 5 Custom predictions:\n{custom_predictions[:5].flatten()}")
+        
+        np.testing.assert_allclose(tf_predictions, custom_predictions, rtol=1e-5, atol=1e-6)
         
 </SELECTION_CONTENT>
 <FILE_CONTAINING_SELECTION>
@@ -97,118 +135,45 @@ class TestSequential:
 
 
     def test_predict(self):
+        np.random.seed(42)
+        x_train = np.random.randn(100, 400).astype(np.float32)
+        
+        tf_model = tf.keras.Sequential([
+            tf.keras.layers.Dense(units=10, activation='relu', input_shape=(400,)),
+            tf.keras.layers.Dense(units=15, activation='relu'),
+            tf.keras.layers.Dense(units=1, activation='sigmoid')
+        ])
+        tf_model.build(input_shape=(None, 400))
+        
+        custom_model = Sequential([
+            Dense(units=10, activation='relu', input_shape=(100, 400)),
+            Dense(units=15, activation='relu'),
+            Dense(units=1, activation='sigmoid')
+        ])
+        custom_model.build(input_shape=x_train.shape)
+        
+        weights = []
+        for layer in tf_model.layers:
+            w, b = layer.get_weights()
+            weights.extend([w, b])
+        custom_model.set_weights(weights)
+        
+        tf_predictions = tf_model.predict(x_train, verbose=0)
+        custom_predictions = custom_model.predict(x_train)
+        
+        print(f"\nTensorFlow predictions shape: {tf_predictions.shape}")
+        print(f"TensorFlow predictions dtype: {tf_predictions.dtype}")
+        print(f"Custom predictions shape: {custom_predictions.shape}")
+        print(f"Custom predictions dtype: {custom_predictions.dtype}")
+        print(f"\nFirst 5 TF predictions:\n{tf_predictions[:5].flatten()}")
+        print(f"\nFirst 5 Custom predictions:\n{custom_predictions[:5].flatten()}")
+        
+        np.testing.assert_allclose(tf_predictions, custom_predictions, rtol=1e-5, atol=1e-6)
         
 </FILE_CONTAINING_SELECTION>
 
 </Context>
 
-```py
--- atom/nn.py
-import numpy as np
-from dataclasses import dataclass,field
-from typing import Callable
-from atom.activations import sigmoid,relu,linear
-from typing import Optional
-
-@dataclass
-class BinaryCrossentropy:
-    y_hat:np.ndarray
-    y:np.ndarray
-
-    def compute_loss(self):return -self.y*np.log(self.y_hat) - (1-self.y) * np.log(1-self.y_hat)
-    
-    def compute_cost(self):return np.mean(self.compute_loss())
-
-
-class Dense:
-
-    ACTIVATIONS = {'sigmoid':sigmoid,
-                   'relu':relu,
-                   'linear':linear}
-    
-    def __init__(self,
-                 units: int,
-                 activation: str,
-                 input_shape: tuple[int,int] | None = None,
-                 ):
-        
-        if not  activation in self.ACTIVATIONS:
-            raise ValueError("Activation not allowed")
-    
-        self.units = units
-        self.input_shape = input_shape
-        self.activation_function: Callable[[np.ndarray],np.ndarray] = self.ACTIVATIONS[activation]
-        self.w: np.ndarray | None = None
-        self.b: np.ndarray | None = None
-        
-        if self.input_shape:
-            self._init_w_b()
-     
-    def _init_w_b(self, w: np.ndarray | None = None, b: np.ndarray | None = None):
-        if not self.input_shape:
-            raise ValueError("Unknown input shape")
-        self.w = w if w is not None else np.random.randn(self.input_shape[1], self.units) * 0.01
-        self.b = b if b is not None else np.zeros((1, self.units))
-  
-
-    def set_weights(self,w: np.ndarray,b: np.ndarray):
-        self._init_w_b(w=w,b=b)
-
-            
-    def build(self,input_shape: tuple[int,int]):
-        if not isinstance(input_shape,tuple) or len(input_shape) != 2:
-            raise ValueError("Invalid input shape")
-        self.input_shape = input_shape
-        self._init_w_b()    
-        
-
-@dataclass
-class Sequential:
-    layers: list[Dense]
-
-    def _set_weights_layers(self,input_shape: tuple[int,int]):
-        current_dim = input_shape[-1]
-        for layer in self.layers:
-            layer.build((input_shape[0],current_dim))
-            current_dim = layer.units
-
-            
-    def __post_init__(self):
-        if getattr(self.layers[0],"input_shape",None) is not None:
-            input_shape = self.layers[0].input_shape
-            self._set_weights_layers(input_shape)
-
-
-    def __getitem__(self,position: int):
-        return self.layers[position]
-
-    def __iter__(self):
-        return iter(self.layers)
-    
-    
-    def build(self,input_shape: tuple)->None:
-        self._set_weights_layers(input_shape)
-            
-    def predict(self,x:np.ndarray):
-        a: np.ndarray = x
-        for layer in self.layers:
-            z = (a @ layer.w) + layer.b
-            print(z.shape)
-            a = layer.activation_function(z)
-        return a
-
-   
-    def set_weights(self,weights:list[np.ndarray]):
-        assert len(weights) == 2 * len(self.layers)
-        for index,layer in enumerate(self.layers):
-            layer.w,layer.b = weights[index * 2],weights[index * 2 + 1]
-
-
-    
-
-    
-
-```
 <MustObey>
 NEVER alter any file other than TEMP_FILE.
 never provide the requested changes as conversational output. Return only the code.

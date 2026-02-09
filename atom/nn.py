@@ -55,7 +55,6 @@ class Dense:
         self.input_shape = input_shape
         self._init_w_b()    
         
-
 @dataclass
 class Sequential:
     layers: list[Dense]

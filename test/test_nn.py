@@ -1,50 +1,49 @@
 import pytest
 import tensorflow as tf
 from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, Input
 import numpy as np
-from atom.nn import Dense,Sequential
+from atom.nn import Dense, Sequential
 
 
 class TestDense:
     def test_init_validations(self):
         with pytest.raises(ValueError):
-             Dense(units=2,activation='foo')
-            
-        valid_dense = Dense(units=10,activation='sigmoid')
+            Dense(units=2, activation="foo")
+
+        valid_dense = Dense(units=10, activation="sigmoid")
         assert valid_dense
-    
+
     def test_build(self):
-        
-        layer = Dense(units=10,activation='sigmoid')
+        layer = Dense(units=10, activation="sigmoid")
         with pytest.raises(ValueError):
-            layer.build(input_shape=(3,3,100))
+            layer.build(input_shape=(3, 3, 100))
 
-        layer.build(input_shape=(1000,400))
-        
-        assert layer.w.shape == (400,10)
-        assert layer.b.shape == (1,10)
+        layer.build(input_shape=(1000, 400))
 
+        assert layer.w.shape == (400, 10)
+        assert layer.b.shape == (1, 10)
 
     def test_set_weights(self):
-         with pytest.raises(ValueError):
-            layer = Dense(units=3,activation='relu')
-            layer.set_weights(np.array([300,200]),np.ndarray([20,20]))
-            
+        with pytest.raises(ValueError):
+            layer = Dense(units=3, activation="relu")
+            layer.set_weights(np.array([300, 200]), np.ndarray([20, 20]))
 
 
 class TestSequential:
     def test_post_init(self):
-        model = Sequential([
-            Dense(units=10, activation='relu',input_shape=(1000,400)),
-            Dense(units=15, activation='relu'),
-            Dense(units=1, activation='sigmoid')
-        ]) 
+        model = Sequential(
+            [
+                Dense(units=10, activation="relu", input_shape=(1000, 400)),
+                Dense(units=15, activation="relu"),
+                Dense(units=1, activation="sigmoid"),
+            ]
+        )
 
         w1_shape, b1_shape = (400, 10), (1, 10)
         w2_shape, b2_shape = (10, 15), (1, 15)
         w3_shape, b3_shape = (15, 1), (1, 1)
-        
+
         assert model[0].w.shape == w1_shape
         assert model[0].b.shape == b1_shape
         assert model[1].w.shape == w2_shape
@@ -53,19 +52,20 @@ class TestSequential:
         assert model[2].b.shape == b3_shape
 
     def test_build(self):
-        
-        x_train = np.random.randn(1000,400)
-        model = Sequential([
-            Dense(units=10, activation='relu'),
-            Dense(units=15, activation='relu'),
-            Dense(units=1, activation='relu')
-        ]) 
+        x_train = np.random.randn(1000, 400)
+        model = Sequential(
+            [
+                Dense(units=10, activation="relu"),
+                Dense(units=15, activation="relu"),
+                Dense(units=1, activation="relu"),
+            ]
+        )
 
         for layer in model:
-            assert not hasattr(layer, 'w') or layer.w is None 
-            
+            assert not hasattr(layer, "w") or layer.w is None
+
         model.build(input_shape=x_train.shape)
-        
+
         w1_shape, b1_shape = (400, 10), (1, 10)
         w2_shape, b2_shape = (10, 15), (1, 15)
         w3_shape, b3_shape = (15, 1), (1, 1)
@@ -75,44 +75,43 @@ class TestSequential:
         assert model[1].w.shape == w2_shape
         assert model[1].b.shape == b2_shape
         assert model[2].w.shape == w3_shape
-        assert model[2].b.shape == b3_shape 
+        assert model[2].b.shape == b3_shape
 
         model.predict(x_train)
-
 
     def test_predict(self):
         np.random.seed(42)
         x_train = np.random.randn(100, 400).astype(np.float32)
-        
-        tf_model = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=10, activation='relu', input_shape=(400,)),
-            tf.keras.layers.Dense(units=15, activation='relu'),
-            tf.keras.layers.Dense(units=1, activation='sigmoid')
-        ])
+
+        tf_model = tf.keras.Sequential(
+            [
+                tf.keras.layers.Input(shape=(400,)),
+                tf.keras.layers.Dense(units=10, activation="relu"),
+                tf.keras.layers.Dense(units=15, activation="relu"),
+                tf.keras.layers.Dense(units=1, activation="sigmoid"),
+            ]
+        )
         tf_model.build(input_shape=(None, 400))
-        
-        custom_model = Sequential([
-            Dense(units=10, activation='relu', input_shape=(100, 400)),
-            Dense(units=15, activation='relu'),
-            Dense(units=1, activation='sigmoid')
-        ])
+
+        custom_model = Sequential(
+            [
+                Dense(units=10, activation="relu", input_shape=(100, 400)),
+                Dense(units=15, activation="relu"),
+                Dense(units=1, activation="sigmoid"),
+            ]
+        )
         custom_model.build(input_shape=x_train.shape)
-        
+
         weights = []
         for layer in tf_model.layers:
             w, b = layer.get_weights()
             weights.extend([w, b])
         custom_model.set_weights(weights)
-        
+
         tf_predictions = tf_model.predict(x_train, verbose=0)
         custom_predictions = custom_model.predict(x_train)
-        
-        print(f"\nTensorFlow predictions shape: {tf_predictions.shape}")
-        print(f"TensorFlow predictions dtype: {tf_predictions.dtype}")
-        print(f"Custom predictions shape: {custom_predictions.shape}")
-        print(f"Custom predictions dtype: {custom_predictions.dtype}")
-        print(f"\nFirst 5 TF predictions:\n{tf_predictions[:5].flatten()}")
-        print(f"\nFirst 5 Custom predictions:\n{custom_predictions[:5].flatten()}")
-        
-        np.testing.assert_allclose(tf_predictions, custom_predictions, rtol=1e-5, atol=1e-6)
-        
+
+
+        np.testing.assert_allclose(
+            tf_predictions, custom_predictions, rtol=1e-5, atol=1e-6
+        )

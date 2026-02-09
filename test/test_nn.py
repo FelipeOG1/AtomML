@@ -78,3 +78,41 @@ class TestSequential:
         assert model[2].b.shape == b3_shape 
 
         model.predict(x_train)
+
+
+    def test_predict(self):
+        np.random.seed(42)
+        x_train = np.random.randn(100, 400).astype(np.float32)
+        
+        tf_model = tf.keras.Sequential([
+            tf.keras.layers.Dense(units=10, activation='relu', input_shape=(400,)),
+            tf.keras.layers.Dense(units=15, activation='relu'),
+            tf.keras.layers.Dense(units=1, activation='sigmoid')
+        ])
+        tf_model.build(input_shape=(None, 400))
+        
+        custom_model = Sequential([
+            Dense(units=10, activation='relu', input_shape=(100, 400)),
+            Dense(units=15, activation='relu'),
+            Dense(units=1, activation='sigmoid')
+        ])
+        custom_model.build(input_shape=x_train.shape)
+        
+        weights = []
+        for layer in tf_model.layers:
+            w, b = layer.get_weights()
+            weights.extend([w, b])
+        custom_model.set_weights(weights)
+        
+        tf_predictions = tf_model.predict(x_train, verbose=0)
+        custom_predictions = custom_model.predict(x_train)
+        
+        print(f"\nTensorFlow predictions shape: {tf_predictions.shape}")
+        print(f"TensorFlow predictions dtype: {tf_predictions.dtype}")
+        print(f"Custom predictions shape: {custom_predictions.shape}")
+        print(f"Custom predictions dtype: {custom_predictions.dtype}")
+        print(f"\nFirst 5 TF predictions:\n{tf_predictions[:5].flatten()}")
+        print(f"\nFirst 5 Custom predictions:\n{custom_predictions[:5].flatten()}")
+        
+        np.testing.assert_allclose(tf_predictions, custom_predictions, rtol=1e-5, atol=1e-6)
+        

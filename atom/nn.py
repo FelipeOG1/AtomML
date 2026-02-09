@@ -13,6 +13,7 @@ class BinaryCrossentropy:
     
     def compute_cost(self):return np.mean(self.compute_loss())
 
+
 class Dense:
 
     ACTIVATIONS = {'sigmoid':sigmoid,
@@ -64,6 +65,8 @@ class Sequential:
         for layer in self.layers:
             layer.build((input_shape[0],current_dim))
             current_dim = layer.units
+
+            
     def __post_init__(self):
         if getattr(self.layers[0],"input_shape",None) is not None:
             input_shape = self.layers[0].input_shape
@@ -93,5 +96,8 @@ class Sequential:
         assert len(weights) == 2 * len(self.layers)
         for index,layer in enumerate(self.layers):
             layer.w,layer.b = weights[index * 2],weights[index * 2 + 1]
+
+
+    
 
     

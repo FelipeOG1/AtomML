@@ -4,15 +4,6 @@ from typing import Callable
 from atom.activations import sigmoid,relu,linear
 from typing import Optional
 
-@dataclass
-class BinaryCrossentropy:
-    y_hat:np.ndarray
-    y:np.ndarray
-
-    def compute_loss(self):return -self.y*np.log(self.y_hat) - (1-self.y) * np.log(1-self.y_hat)
-    
-    def compute_cost(self):return np.mean(self.compute_loss())
-
 
 class Dense:
 

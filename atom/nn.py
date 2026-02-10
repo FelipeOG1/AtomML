@@ -86,7 +86,6 @@ class Sequential:
         a: np.ndarray = x
         for layer in self.layers:
             z = (a @ layer.w) + layer.b
-            print(z.shape)
             a = layer.activation_function(z)
         return a
 
@@ -96,7 +95,4 @@ class Sequential:
         for index,layer in enumerate(self.layers):
             layer.w,layer.b = weights[index * 2],weights[index * 2 + 1]
 
-
-    
-
-    
+   

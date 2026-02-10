@@ -17,8 +17,8 @@ class SparseCategoricalCrossentropy:
     y:np.ndarray
 
     def compute_loss(self):
-        eps = 1e-9
         probs = self.y_hat[np.arange(len(self.y)),self.y]
-        return -np.log(probs + eps)
+        return -np.log(probs + EPS)
+    def compute_cost(self):return np.mean(self.compute_loss())
 
 

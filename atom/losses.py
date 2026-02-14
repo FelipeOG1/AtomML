@@ -1,6 +1,6 @@
 import numpy as np
 from dataclasses import dataclass,field
-from atom.consts import EPS
+from atom.constants import EPS
 
 @dataclass
 class BinaryCrossentropy:
@@ -19,6 +19,10 @@ class SparseCategoricalCrossentropy:
     def compute_loss(self):
         probs = self.y_hat[np.arange(len(self.y)),self.y]
         return -np.log(probs + EPS)
+        
     def compute_cost(self):return np.mean(self.compute_loss())
+
+
+
 
 

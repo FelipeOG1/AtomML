@@ -5,6 +5,7 @@ from atom.activations import sigmoid,relu,linear
 from typing import Optional
 
 
+
 class Dense:
 
     ACTIVATIONS = {'sigmoid':sigmoid,
@@ -49,7 +50,6 @@ class Dense:
 @dataclass
 class Sequential:
     layers: list[Dense]
-
     def _set_weights_layers(self,input_shape: tuple[int,int]):
         current_dim = input_shape[-1]
         for layer in self.layers:

@@ -73,7 +73,7 @@ class Sequential:
     def build(self,input_shape: tuple)->None:
         self._set_weights_layers(input_shape)
             
-    def predict(self,x:np.ndarray):
+    def predict(self,x: np.ndarray):
         a: np.ndarray = x
         for layer in self.layers:
             z = (a @ layer.w) + layer.b
@@ -81,9 +81,9 @@ class Sequential:
         return a
 
    
-    def set_weights(self,weights:list[np.ndarray]):
+    def set_weights(self,weights: list[np.ndarray]):
         assert len(weights) == 2 * len(self.layers)
         for index,layer in enumerate(self.layers):
-            layer.w,layer.b = weights[index * 2],weights[index * 2 + 1]
+            layer.w, layer.b = weights[index * 2], weights[index * 2 + 1]
 
    

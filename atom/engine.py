@@ -20,13 +20,13 @@ class Scalar:
 
     def __add__(self, other: 'Scalar')-> 'Scalar':
         return Scalar(data=self.data + other.data,
-                      _children=(self,other),
+                      _children=(self, other),
                       _op='+'
                       )
 
     def __mul__(self, other: 'Scalar')-> 'Scalar':
         return Scalar(data=self.data * other.data,
-                      _children=(self,other),
+                      _children=(self, other),
                       _op='*'
                       )
 

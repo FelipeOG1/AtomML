@@ -8,7 +8,7 @@ class Scalar:
                  _children: tuple = ()
                  ):
         
-        
+        self.grad = 0       
         self.data = data
         self._prev = set(_children)
         self._op = _op

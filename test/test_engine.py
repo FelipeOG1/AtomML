@@ -13,6 +13,7 @@ class TestScalar:
         assert a in d._prev
         assert b in d._prev
         assert d._op == '+'
+
     def test_mul(self):
         a = Scalar(3.0)
         b = Scalar(2.0)

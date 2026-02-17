@@ -19,16 +19,22 @@ class Scalar:
 
 
     def __add__(self, other: 'Scalar')-> 'Scalar':
-        return Scalar(data=self.data + other.data,
+        scalar = Scalar(data=self.data + other.data,
                       _children=(self, other),
                       _op='+'
                       )
 
+        return scalar
+
     def __mul__(self, other: 'Scalar')-> 'Scalar':
-        return Scalar(data=self.data * other.data,
+        scalar = Scalar(data=self.data * other.data,
                       _children=(self, other),
                       _op='*'
                       )
+        return scalar
+
+
+    
 
 
 

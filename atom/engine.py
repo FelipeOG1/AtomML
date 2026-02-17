@@ -4,8 +4,8 @@ from typing import Self
 
 class Scalar:
     def __init__(self, data: float,
-                 _op: str = '',
-                 _children: tuple = ()
+                 _children: tuple = (),
+                 _op: str = ''
                  ):
         
         self.grad = 0       
@@ -20,16 +20,16 @@ class Scalar:
 
     def __add__(self, other: 'Scalar')-> 'Scalar':
         scalar = Scalar(data=self.data + other.data,
-                      _children=(self, other),
-                      _op='+'
+                      _op='+',
+                      _children=(self, other)
                       )
 
         return scalar
 
     def __mul__(self, other: 'Scalar')-> 'Scalar':
         scalar = Scalar(data=self.data * other.data,
-                      _children=(self, other),
-                      _op='*'
+                      _op='*',
+                      _children=(self, other)
                       )
         return scalar
 

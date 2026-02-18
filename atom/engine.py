@@ -6,6 +6,7 @@ class Scalar:
         
         self.grad = 0       
         self.data = data
+        self._backward = lambda: None
         self._prev = set(_children)
         self._op = _op
         
@@ -15,19 +16,24 @@ class Scalar:
 
 
     def __add__(self, other: 'Scalar')-> 'Scalar':
-        scalar = Scalar(data=self.data + other.data,
+        out = Scalar(data=self.data + other.data,
                       _children=(self, other),
                       _op='+'
                       )
 
-        return scalar
+        def _backward():
+          pass
+            
+        out._backward = _backward
+
+        return out
 
     def __mul__(self, other: 'Scalar')-> 'Scalar':
-        scalar = Scalar(data=self.data * other.data,
+        out = Scalar(data=self.data * other.data,
                         _children=(self, other),
                         _op='*'
                       )
-        return scalar
+        return out
 
    
     def relu(self):

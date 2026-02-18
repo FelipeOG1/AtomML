@@ -20,24 +20,27 @@ class Scalar:
 
     def __add__(self, other: 'Scalar')-> 'Scalar':
         scalar = Scalar(data=self.data + other.data,
-                      _op='+',
-                      _children=(self, other)
+                      _children=(self, other),
+                      _op='+'
                       )
 
         return scalar
 
     def __mul__(self, other: 'Scalar')-> 'Scalar':
         scalar = Scalar(data=self.data * other.data,
-                      _op='*',
-                      _children=(self, other)
+                        _children=(self, other),
+                        _op='*'
                       )
         return scalar
 
+   
+    def relu(self):
+        out = Scalar(data=0 if self.data < 0 else self.data,
+                     _children=(self,),
+                     _op='ReLu'
+                     )
 
-    
-
-
-
+        return out
 
 
 

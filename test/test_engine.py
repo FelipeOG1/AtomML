@@ -43,9 +43,16 @@ class TestScalar:
         assert a in e._prev
         
         
- 
-    
-
-    
+    def test_relu(self):
+        s = Scalar(-30.1)
+        s2 = Scalar(33.3)
         
+        r1 = s.relu()
+        r2 = s2.relu()
         
+        assert r1.data == 0
+        assert r2.data == 33.3
+        assert s in r1._prev
+        assert s2 in r2._prev
+        assert r1._op == 'ReLu'
+        assert r2._op == 'ReLu'

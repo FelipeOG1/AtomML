@@ -1,7 +1,3 @@
-import  dataclasses
-from typing import Self
-
-
 class Scalar:
     def __init__(self, data: float,
                  _children: tuple = (),

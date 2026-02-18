@@ -53,6 +53,35 @@ class Scalar:
 
         return out
 
+     
+    def backward(self):
+        topo_order: list['Scalar'] = []
+        visited: set['Scalar'] = set()
+
+        def build_topo_order(node: 'Scalar'):
+            if node not in visited:
+                visited.add(node)
+                for child in node._prev:
+                    build_topo_order(child)
+                topo_order.append(node)
+                
+        build_topo_order(self)
+        
+        for node in reversed(topo_order):
+            node._backward()
+            
+            
+
+
+    
+
+
+        
+        
+
+            
+                
+
 
 
 

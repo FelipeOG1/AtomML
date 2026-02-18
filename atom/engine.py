@@ -20,9 +20,10 @@ class Scalar:
                       _children=(self, other),
                       _op='+'
                       )
-
+       
         def _backward():
-          pass
+            self.grad += out.grad
+            other.grad += out.grad
             
         out._backward = _backward
 
@@ -33,8 +34,9 @@ class Scalar:
                         _children=(self, other),
                         _op='*'
                       )
-        return out
 
+        
+        return out
    
     def relu(self):
         out = Scalar(data=0 if self.data < 0 else self.data,

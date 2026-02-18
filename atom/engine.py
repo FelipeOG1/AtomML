@@ -64,11 +64,19 @@ class Scalar:
                 for child in node._prev:
                     build_topo_order(child)
                 topo_order.append(node)
+
+
+        
                 
         build_topo_order(self)
+
+        
+        self.grad = 1.0
         
         for node in reversed(topo_order):
             node._backward()
+
+
             
             
 

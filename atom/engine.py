@@ -14,22 +14,27 @@ class Scalar:
     def __repr__(self)->str:
         return f"Value(data={self.data})"
 
-
+     
+ 
     def __add__(self, other: 'Scalar')-> 'Scalar':
+        other = other if isinstance(other, Scalar) else Scalar(other)
         out = Scalar(data=self.data + other.data,
                       _children=(self, other),
                       _op='+'
                       )
-       
+
         def _backward():
             self.grad += out.grad
             other.grad += out.grad
-            
+
         out._backward = _backward
+
 
         return out
 
     def __mul__(self, other: 'Scalar')-> 'Scalar':
+        other = other if isinstance(other, Scalar) else Scalar(other)
+
         out = Scalar(data=self.data * other.data,
                         _children=(self, other),
                         _op='*'
@@ -38,12 +43,10 @@ class Scalar:
         def _backward():
             self.grad += other.data * out.grad
             other.grad += self.data * out.grad
-            
         out._backward = _backward
 
-
-        
         return out
+    
    
     def relu(self):
         out = Scalar(data=0 if self.data < 0 else self.data,
@@ -52,54 +55,26 @@ class Scalar:
                      )
 
         return out
-
-     
+    
     def backward(self):
-        topo_order: list['Scalar'] = []
-        visited: set['Scalar'] = set()
-
-        def build_topo_order(node: 'Scalar'):
-            if node not in visited:
-                visited.add(node)
-                for child in node._prev:
-                    build_topo_order(child)
-                topo_order.append(node)
-
-
         
+        visited_nodes: set['Scalar'] = set()
+        topo: list['Scalar'] = []
+        
+        def build_topo(node: 'Scalar'):
+            if node not in visited_nodes:
+                visited_nodes.add(node)
+                for child in node._prev:
+                    build_topo(child)
                 
-        build_topo_order(self)
+                topo.append(node)
 
+        build_topo(self)
         
         self.grad = 1.0
         
-        for node in reversed(topo_order):
+        for node in reversed(topo):
             node._backward()
-
-
             
-            
-
-
     
 
-
-        
-        
-
-            
-                
-
-
-
-
-
-
-
-
-
-
-    
-    
- 
-       

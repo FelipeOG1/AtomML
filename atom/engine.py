@@ -1,25 +1,26 @@
 
 from __future__ import annotations
 
+
 class Scalar:
     def __init__(self, data: float,
                  _children: tuple = (),
                  _op: str = ''
                  ):
-        
-        self.grad = 0       
+
+        self.grad = 0
         self.data = data
         self._backward = lambda: None
         self._prev = set(_children)
         self._op = _op
-        
-    
-    def __repr__(self)->str:
+
+
+    def __repr__(self) -> str:
         return f"Value(data={self.data})"
 
-     
- 
-    def __add__(self, other: Scalar)-> Scalar:
+
+
+    def __add__(self, other: Scalar) -> Scalar:
         other = other if isinstance(other, Scalar) else Scalar(other)
         out = Scalar(data=self.data + other.data,
                       _children=(self, other),
@@ -35,7 +36,7 @@ class Scalar:
 
         return out
 
-    def __mul__(self, other: Scalar)-> Scalar:
+    def __mul__(self, other: Scalar) -> Scalar:
         other = other if isinstance(other, Scalar) else Scalar(other)
 
         out = Scalar(data=self.data * other.data,
@@ -49,8 +50,8 @@ class Scalar:
         out._backward = _backward
 
         return out
-    
-   
+
+
     def relu(self):
         out = Scalar(data=0 if self.data < 0 else self.data,
                      _children=(self,),
@@ -58,29 +59,27 @@ class Scalar:
                      )
         return out
 
-        
-    
+
+
     def backward(self):
-        
+
         visited_nodes: set[Scalar] = set()
         topo: list[Scalar] = []
-        
+
         def build_topo(node: Scalar):
             if node not in visited_nodes:
                 visited_nodes.add(node)
                 for child in node._prev:
                     build_topo(child)
-                
+
                 topo.append(node)
 
         build_topo(self)
-        
+
         self.grad = 1.0
-        
+
         for node in reversed(topo):
             node._backward()
-    
-    def __rmul__(self, other: Scalar): 
-        return self * other
 
- 
+    def __rmul__(self, other: Scalar):
+        return self * other

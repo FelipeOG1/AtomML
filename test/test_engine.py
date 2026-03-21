@@ -55,10 +55,17 @@ class TestScalar:
         assert r1._op == 'ReLu'
         assert r2._op == 'ReLu'
 
-    def test_rmul(self):
-        a = Scalar(300)
-        c = 2 * a 
+    def test_neg(self):
+        a = Scalar(5.0)
+        b = -a
         
-        assert isinstance(c, Scalar)
-        assert a in c._prev
-        assert c.data == 600
+        assert b.data == -5.0
+        assert a in b._prev
+
+    def test_pow(self):
+        a = Scalar(3.0)
+        b = a**2
+        
+        assert b.data == 9.0
+        assert a in b._prev
+        assert b._op == '**'

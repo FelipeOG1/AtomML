@@ -1,6 +1,4 @@
 from atom.engine import Scalar
-
-
 class TestScalar:
     
     def test_add(self):
@@ -56,3 +54,11 @@ class TestScalar:
         assert s2 in r2._prev
         assert r1._op == 'ReLu'
         assert r2._op == 'ReLu'
+
+    def test_rmul(self):
+        a = Scalar(300)
+        c = 2 * a 
+        
+        assert isinstance(c, Scalar)
+        assert a in c._prev
+        assert c.data == 600

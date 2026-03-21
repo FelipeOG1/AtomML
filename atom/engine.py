@@ -53,8 +53,9 @@ class Scalar:
                      _children=(self,),
                      _op='ReLu'
                      )
-
         return out
+
+        
     
     def backward(self):
         
@@ -75,6 +76,8 @@ class Scalar:
         
         for node in reversed(topo):
             node._backward()
-            
     
+    def __rmul__(self, other): 
+        return self * other
 
+ 

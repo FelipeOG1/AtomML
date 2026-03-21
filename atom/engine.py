@@ -1,3 +1,6 @@
+
+from __future__ import annotations
+
 class Scalar:
     def __init__(self, data: float,
                  _children: tuple = (),
@@ -16,7 +19,7 @@ class Scalar:
 
      
  
-    def __add__(self, other: 'Scalar')-> 'Scalar':
+    def __add__(self, other: Scalar)-> Scalar:
         other = other if isinstance(other, Scalar) else Scalar(other)
         out = Scalar(data=self.data + other.data,
                       _children=(self, other),
@@ -32,7 +35,7 @@ class Scalar:
 
         return out
 
-    def __mul__(self, other: 'Scalar')-> 'Scalar':
+    def __mul__(self, other: Scalar)-> Scalar:
         other = other if isinstance(other, Scalar) else Scalar(other)
 
         out = Scalar(data=self.data * other.data,
@@ -59,10 +62,10 @@ class Scalar:
     
     def backward(self):
         
-        visited_nodes: set['Scalar'] = set()
-        topo: list['Scalar'] = []
+        visited_nodes: set[Scalar] = set()
+        topo: list[Scalar] = []
         
-        def build_topo(node: 'Scalar'):
+        def build_topo(node: Scalar):
             if node not in visited_nodes:
                 visited_nodes.add(node)
                 for child in node._prev:
@@ -77,7 +80,7 @@ class Scalar:
         for node in reversed(topo):
             node._backward()
     
-    def __rmul__(self, other): 
+    def __rmul__(self, other: Scalar): 
         return self * other
 
  

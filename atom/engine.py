@@ -57,7 +57,7 @@ class Scalar:
                      _children=(self,),
                      _op='ReLu'
                      )
-
+        
         def _backward():
             self.grad += (1 if self.data > 0 else 0) * out.grad
         out._backward = _backward

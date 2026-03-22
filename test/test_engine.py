@@ -68,4 +68,13 @@ class TestScalar:
         
         assert b.data == 9.0
         assert a in b._prev
-        assert b._op == '**'
+        assert b._op == '**2'
+
+    def test_backward(self):
+        x1 = Scalar(2.0)
+        x2 = Scalar(0.0)
+        w1 = Scalar(-3.0)
+        w2 = Scalar(1.0)
+        b = Scalar(6.8813735870195432)
+        n = x1*w1 + x2*w2 + b
+        

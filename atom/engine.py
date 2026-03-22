@@ -42,7 +42,7 @@ class Scalar:
     def __pow__(self, other: int | float) -> Scalar:
         out = Scalar(data=self.data**other,
                      _children=(self, ),
-                     _op='**'
+                     _op=f'**{other}'
                      )
 
         def _backward():

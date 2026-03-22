@@ -40,7 +40,7 @@ class Dense:
         self._init_w_b(w=w,b=b)
 
             
-    def build(self,input_shape: tuple[int,int]):
+    def build(self,input_shape: tuple[int, int]):
         if not isinstance(input_shape,tuple) or len(input_shape) != 2:
             raise ValueError("Invalid input shape")
         self.input_shape = input_shape
@@ -50,10 +50,11 @@ class Dense:
 class Sequential:
     
     layers: list[Dense]
+    
     def _set_weights_layers(self,input_shape: tuple[int,int]):
         current_dim = input_shape[-1]
         for layer in self.layers:
-            layer.build((input_shape[0],current_dim))
+            layer.build((input_shape[0], current_dim))
             current_dim = layer.units
 
             

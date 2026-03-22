@@ -14,7 +14,16 @@ class layer:
 
     def __call__(self, x):
         outs = [n(x) for n in self.neurons]
-        return outs
+        return outs[0] if len(self.neurons) == 1 else outs
 
-
-
+class MLP:
+    def __init__(self, layers):
+        self.layers = layers
+        
+    def __call__(self,x):
+        for layer in self.layers:
+            x = layer(x)
+        return x
+            
+        
+   

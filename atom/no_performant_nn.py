@@ -8,3 +8,13 @@ class Neuron:
         z = sum([xi * wi for xi, wi in zip(x,  self.w)], self.b) 
         return z.relu()
 
+class layer:
+    def __init__(self, nin, nout):
+        self.neurons = [Neuron(nin) for _ in range(nout)]
+
+    def __call__(self, x):
+        outs = [n(x) for n in self.neurons]
+        return outs
+
+
+
